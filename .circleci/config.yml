@@ -20,7 +20,7 @@ jobs:
           
           command: |
             docker build -t $IMAGE_NAME:latest .
-   deploy:
+  deploy:
     executor: docker-publisher
     steps:
       - checkout
@@ -51,3 +51,4 @@ workflows:
     jobs:
       - node/test
       - build
+      - deploy
