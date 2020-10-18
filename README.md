@@ -1,3 +1,9 @@
+Para crear la imagen de docker:
+docker build -t backreact .
+
+Para correr la imagen, tiren la siguiente fatality:
+docker run -it --rm -v ${PWD}:/app -v /app/node_modules -p 3001:3000 -e CHOKIDAR_USEPOLLING=true backreact
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
