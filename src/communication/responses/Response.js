@@ -8,11 +8,11 @@ export class ApiResponse {
     }
 
     hasError() {
-        return this._jsonResponse.error !== undefined;
+        return this._jsonResponse.Error !== undefined || this._jsonResponse.error !== undefined;
     }
 
     errors() {
-        return this._jsonResponse.error;
+        return this._jsonResponse.Error ?? this._jsonResponse.error;
     }
 
     content() {

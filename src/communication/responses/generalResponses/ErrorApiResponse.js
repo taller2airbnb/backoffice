@@ -10,7 +10,7 @@ export class ErrorApiResponse extends ApiResponse {
     }
 
     static understandThis(jsonResponse) {
-        return jsonResponse.error !== undefined && this.errorCodes().includes(jsonResponse.error);
+        return (jsonResponse.error !== undefined || jsonResponse.Error !== undefined ) /* && this.errorCodes().includes(jsonResponse.error) */;
     }
 
     errorMessages() {

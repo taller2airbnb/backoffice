@@ -90,7 +90,10 @@ function SignIn(props) {
             id="password"
             autoComplete="current-password"
             onChange={(e) => changeHandler(e)}
-          />          
+          />
+          {props.errorMessage && <Typography component="h1" variant="h5" style={{color: 'red'}}>
+            {props.errorMessage}
+          </Typography>}
           <Button
             fullWidth
             type="button"
@@ -136,7 +139,7 @@ export class Login extends Component {
 
     render() {
         return (
-            <SignIn handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange}></SignIn>
+            <SignIn handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignIn>
         )
     }
 

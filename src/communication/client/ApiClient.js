@@ -1,4 +1,5 @@
 import {ServerErrorResponse} from "../responses/generalResponses/ServerErrorResponse.js";
+import {ErrorApiResponse} from "../responses/generalResponses/ErrorApiResponse.js";
 import {GetProfileEndpoint} from "../endpoints/GetProfileEndpoint.js";
 import {LoginEndpoint} from "../endpoints/LoginEndpoint";
 import {RegisterEndpoint} from "../endpoints/RegisterEndpoint";
@@ -13,7 +14,7 @@ class ApiClient {
     }
 
     _handleResponse(response, onResponse) {
-        if (response instanceof ServerErrorResponse) {
+        if (response.status === 500) {
             console.log("Server error: ", response);
             return this._handleServerError(response);
         }
