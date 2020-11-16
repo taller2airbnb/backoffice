@@ -6,6 +6,6 @@ export class SuccessfulApiResponse extends ApiResponse {
     }
 
     static understandThis(jsonResponse) {
-        return jsonResponse.error === undefined;
+        return jsonResponse.error === undefined && jsonResponse.Error === undefined;
     }
 }
