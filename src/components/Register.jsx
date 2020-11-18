@@ -1,29 +1,40 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
+import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        BookBnB
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const styles = (theme) => ({
+  paper: {
+    maxWidth: 936,
+    margin: 'auto',
+    overflow: 'hidden',
+  },
+  searchBar: {
+    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  },
+  searchInput: {
+    fontSize: theme.typography.fontSize,
+  },
+  block: {
+    display: 'block',
+  },
+  addUser: {
+    marginRight: theme.spacing(1),
+  },
+  contentWrapper: {
+    margin: '40px 16px',
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-  },
+  }  
 }));
 
 function SignUp(props) {
@@ -58,12 +69,9 @@ function SignUp(props) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+      <div className={classes.paper}>        
         <Typography component="h1" variant="h5">
-          Sign up
+          User Creation Form
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
@@ -154,6 +162,9 @@ function SignUp(props) {
               />
             </Grid>
           </Grid>
+          {props.errorMessage && <Typography component="h1" variant="h5" style={{color: 'red'}}>
+            {props.errorMessage}
+          </Typography>}
           <Button
             type="button"
             fullWidth
@@ -162,26 +173,15 @@ function SignUp(props) {
             className={classes.submit}
             onClick={submitHandler}
           >
-            Sign Up
+            Create User
           </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href="/" variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
         </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
+      </div>      
     </Container>
   );
 }
 
-export default class Register extends React.Component {
-
+class Register extends React.Component {    
   constructor(props) {
     super(props);
 
@@ -198,11 +198,23 @@ export default class Register extends React.Component {
         },
         errorMessage: ''
     };
-
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleApiResponse = this.handleApiResponse.bind(this);
-}
+  }
+
+  initializeForm(){
+    this.setState({formData:{
+      email: '',
+      password: '',
+      first_name: '',
+      last_name: '',
+      national_id_type: '',
+      national_id: '',
+      alias: '',
+      profile: 0
+  } })
+  }
 
   handleInputChange(event) {
     const input = event.target;
@@ -214,10 +226,8 @@ export default class Register extends React.Component {
 handleApiResponse(response) {
     if (response.hasError()) {
         this.setState({errorMessage: response.errorMessages()});
-        alert("Tiro Error");
     } else {
-        alert("Salio bien pa");
-        this.props.history.push(app.routes().home);
+        alert("User Created Successfully");        
     }
 }
 
@@ -225,7 +235,13 @@ handleSubmit() {
     app.apiClient().register(this.state.formData, this.handleApiResponse);
 }
 
-  render() {
-    return <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} ></SignUp>
-  }
+  render(){     
+      return <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
+  }    
 }
+
+Register.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Register);

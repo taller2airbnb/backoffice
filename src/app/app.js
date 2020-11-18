@@ -22,7 +22,7 @@ class App {
             home: '/home',
             profile: '/profile',
             healthcheck: '/healthcheck',
-            register: '/register'
+            other: '/other'    
         }
     }
 
