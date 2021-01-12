@@ -22,7 +22,8 @@ class App {
             home: '/home',
             profile: '/profile',
             healthcheck: '/healthcheck',
-            other: '/other'    
+            other: '/other',
+            userlist: '/userlist',
         }
     }
 

@@ -127,7 +127,9 @@ export class Login extends Component {
         this.state = {
             formData: {
                 email: '',
-                password: ''
+                password: '',
+                google_token: '',
+                user_type: 'admin',
             },
             errorMessage: ''
         };

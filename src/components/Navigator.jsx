@@ -24,7 +24,8 @@ const categories = [
   {
     id: 'Users',
     children: [
-      { id: 'User Management', icon: <PeopleIcon />, route: 'home' },      
+      { id: 'Create User', icon: <PeopleIcon />, route: 'home' },  
+      { id: 'User List', icon: <PeopleIcon />, route: 'userlist' },  
     ],
   },
   {
