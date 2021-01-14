@@ -73,17 +73,47 @@ function SignUp(props) {
         <Typography component="h1" variant="h5">
           List of users
         </Typography>
-        <div>User whatever</div>
+        <div>User whapenistever</div>
       </div>      
     </Container>
   );
 }
+
+function getRequestOptions(method, headers, body, bearerToken){
+  let requestOptions = {
+      method: method,
+      headers: headers        
+    };
+
+    if(bearerToken){
+      requestOptions.headers = { ...headers, 'Authorization': /* 'Bearer ' + */ bearerToken}
+    }
+    if(body){
+        requestOptions = {...requestOptions, body: JSON.stringify(body)}
+    }
+
+    return requestOptions;
+}
+
+async function get(endpoint, bearerToken){
+  let headers = { 'Content-Type': 'application/json' }
+  const requestOptions = getRequestOptions('GET', headers, '', bearerToken);    
+
+  let response = await fetch(endpoint, requestOptions);
+  return response;
+}
+
+
+
 
 class UserList extends React.Component {    
   constructor(props) {
     super(props);
 
     this.state = {
+        loading: true,
+        status: null,
+        name: '',
         formData: {
             email: '',
             password: '',
@@ -99,6 +129,19 @@ class UserList extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleApiResponse = this.handleApiResponse.bind(this);
+  }
+
+  async componentDidMount() {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDU3NTEwOSwiZXhwIjoxNjEwNjYxNTA5fQ.zDqMV7VJ-A-bUytyvPzg-QtDLwbwQAncPqy1bmtbEas';
+    const url = "https://taller2airbnb-businesscore.herokuapp.com/user";
+    const response = await get(url, token);
+    //this.setState({ user: 'jorge', loading: false});
+    this.setState({ status: response.status, loading: false});
+    if (response.status == 200){
+      let json = await response.json();
+      const user_list = json.message.users     
+      this.setState({ name: user_list[0].first_name});
+    }
   }
 
   initializeForm(){
@@ -133,9 +176,29 @@ handleSubmit() {
     app.apiClient().register(this.state.formData, this.handleApiResponse);
 }
 
-  render(){     
-      return <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
-  }    
+  render(){
+    if (this.state.loading) {
+      return <div>loading...</div>;
+    }
+//
+//    if (!this.state.user) {
+//      return <div>didn't get a person</div>;
+//    }
+
+    return (
+      <div>
+        <div>Status: {this.state.status}</div>
+        <div>{this.state.name}</div>
+      </div>
+    );
+  }
+
+
+
+
+//  render(){     
+//      return <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
+//  }    
 }
 
 UserList.propTypes = {
