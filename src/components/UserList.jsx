@@ -103,7 +103,13 @@ async function get(endpoint, bearerToken){
   return response;
 }
 
+async function put(endpoint, body = '', bearerToken){
+  let headers = { 'Content-Type': 'application/json' }
+  const requestOptions = getRequestOptions('PUT', headers, body, bearerToken);    
 
+  let response = await fetch(endpoint, requestOptions);
+  return response;
+}
 
 
 class UserList extends React.Component {    
@@ -124,6 +130,7 @@ class UserList extends React.Component {
             alias: '',
             profile: 0
         },
+        user_list: [],
         errorMessage: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -133,14 +140,13 @@ class UserList extends React.Component {
 
   async componentDidMount() {
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDU3NTEwOSwiZXhwIjoxNjEwNjYxNTA5fQ.zDqMV7VJ-A-bUytyvPzg-QtDLwbwQAncPqy1bmtbEas';
-    const url = "https://taller2airbnb-businesscore.herokuapp.com/user";
-    const response = await get(url, token);
+    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user";
+    const response = await get(endpoint, token);
     //this.setState({ user: 'jorge', loading: false});
     this.setState({ status: response.status, loading: false});
     if (response.status == 200){
       let json = await response.json();
-      const user_list = json.message.users     
-      this.setState({ name: user_list[0].first_name});
+      this.setState({ user_list: json.message.users});
     }
   }
 
@@ -176,14 +182,58 @@ handleSubmit() {
     app.apiClient().register(this.state.formData, this.handleApiResponse);
 }
 
+  async setBlockStatus(user_id, new_status) {
+    //edit = async() => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDU3NTEwOSwiZXhwIjoxNjEwNjYxNTA5fQ.zDqMV7VJ-A-bUytyvPzg-QtDLwbwQAncPqy1bmtbEas';
+    const body = {"new_status": new_status}
+    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user/" + user_id + "/blocked_status";
+    let response = await put(endpoint, body, token)
+  }
+
   render(){
+    const DisplayUsers = ({user_list}) => (
+      <>
+        {user_list.map(user => (
+          <div className="user" key={user.id}>
+            <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
+            <div>
+              Alias: {user.alias}, 
+              Mail: {user.email}, 
+              ID: {user.national_id_type} {user.national_id}, 
+              Blocked: {user.blocked.toString()}
+
+            </div>
+          
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              //className={classes.submit}
+              onClick={this.setBlockStatus(user.id, false)}
+            >
+              Block {user.alias}
+            </Button>
+          
+          </div>
+        ))}
+      </>
+    );
+
     if (this.state.loading) {
       return <div>loading...</div>;
     }
-//
-//    if (!this.state.user) {
-//      return <div>didn't get a person</div>;
-//    }
+
+    if (this.state.user_list.length > 0){
+      return (
+        <div>
+          <div>Status: {this.state.status}</div>
+          <div>{this.state.name}</div>
+          <div>
+            <DisplayUsers user_list={this.state.user_list} />
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div>
@@ -192,13 +242,7 @@ handleSubmit() {
       </div>
     );
   }
-
-
-
-
-//  render(){     
-//      return <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
-//  }    
+  
 }
 
 UserList.propTypes = {
