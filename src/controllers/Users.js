@@ -5,8 +5,7 @@ import UserList from "../components/UserList"
 
 export class Users extends Component {
     render() {
-        return (        
-            //<Paperbase selectedRoute='userlist'><div>Puto</div></Paperbase>   
+        return (
             <Paperbase selectedRoute='home' header='User List' ><UserList></UserList></Paperbase>
         )
     }
