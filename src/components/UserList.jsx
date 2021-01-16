@@ -12,6 +12,9 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
+import {get, put} from "../communication/Request";
+import {userListEndpoint, userToken} from "../communication/endpoints/EndpointList"
+
 
 const styles = (theme) => ({
   paper: {
@@ -35,81 +38,6 @@ const styles = (theme) => ({
     margin: '40px 16px',
   },
 });
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  }  
-}));
-
-function SignUp(props) {
-  const classes = useStyles();
-  const submitHandler = () => {
-    props.handleSubmit();
-  }
-
-  const changeHandler = (e) => {
-    props.handleInputChange(e);
-  }
-
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>        
-        <Typography component="h1" variant="h5">
-          List of users
-        </Typography>
-        <div>User whapenistever</div>
-      </div>      
-    </Container>
-  );
-}
-
-function getRequestOptions(method, headers, body, bearerToken){
-  let requestOptions = {
-      method: method,
-      headers: headers        
-    };
-
-    if(bearerToken){
-      requestOptions.headers = { ...headers, 'Authorization': /* 'Bearer ' + */ bearerToken}
-    }
-    if(body){
-        requestOptions = {...requestOptions, body: JSON.stringify(body)}
-    }
-
-    return requestOptions;
-}
-
-async function get(endpoint, bearerToken){
-  let headers = { 'Content-Type': 'application/json' }
-  const requestOptions = getRequestOptions('GET', headers, '', bearerToken);    
-
-  let response = await fetch(endpoint, requestOptions);
-  return response;
-}
-
-async function put(endpoint, body = '', bearerToken){
-  let headers = { 'Content-Type': 'application/json' }
-  const requestOptions = getRequestOptions('PUT', headers, body, bearerToken);    
-
-  let response = await fetch(endpoint, requestOptions);
-  return response;
-}
 
 
 class UserList extends React.Component {    
@@ -143,8 +71,8 @@ class UserList extends React.Component {
   }
 
   async reloadUserList() {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDgyNDQzNywiZXhwIjoxNjEwOTEwODM3fQ.o6bidftkx9Fi5dizhpy6S3P8LBz5Pa1MhF-0hIgeCzs';
-    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user";
+    const token = userToken;
+    const endpoint = userListEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
     if (response.status == 200){
@@ -210,9 +138,9 @@ class UserList extends React.Component {
 
   async setBlockStatus(user_id, new_status) {
     //edit = async() => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDgyNDQzNywiZXhwIjoxNjEwOTEwODM3fQ.o6bidftkx9Fi5dizhpy6S3P8LBz5Pa1MhF-0hIgeCzs';
+    const token = userToken;
     const body = {"new_status": new_status}
-    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user/" + user_id + "/blocked_status";
+    const endpoint = userListEndpoint + "/" + user_id + "/blocked_status";
     let response = await put(endpoint, body, token)
     this.setState({loading: true})
     this.reloadUserList()
@@ -233,6 +161,7 @@ class UserList extends React.Component {
           <div>
             {this.state.user_list.map(this.listAUser, this)}
           </div>
+          <div>{userListEndpoint}</div>
         </div>
       );
     }
