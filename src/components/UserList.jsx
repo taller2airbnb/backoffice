@@ -139,28 +139,24 @@ class UserList extends React.Component {
   }
 
   async componentDidMount() {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDU3NTEwOSwiZXhwIjoxNjEwNjYxNTA5fQ.zDqMV7VJ-A-bUytyvPzg-QtDLwbwQAncPqy1bmtbEas';
+    this.reloadUserList()
+  }
+
+  async reloadUserList() {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDgyNDQzNywiZXhwIjoxNjEwOTEwODM3fQ.o6bidftkx9Fi5dizhpy6S3P8LBz5Pa1MhF-0hIgeCzs';
     const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user";
     const response = await get(endpoint, token);
-    //this.setState({ user: 'jorge', loading: false});
     this.setState({ status: response.status, loading: false});
     if (response.status == 200){
       let json = await response.json();
+      let myList = json.message.users
+      myList.sort((a,b) => (a.id > b.id) ? 1: -1)
       this.setState({ user_list: json.message.users});
     }
   }
 
   initializeForm(){
-    this.setState({formData:{
-      email: '',
-      password: '',
-      first_name: '',
-      last_name: '',
-      national_id_type: '',
-      national_id: '',
-      alias: '',
-      profile: 0
-  } })
+    this.setState({ test: 'asdas'});
   }
 
   handleInputChange(event) {
@@ -170,57 +166,62 @@ class UserList extends React.Component {
     this.setState({formData: formData});
 }
 
-handleApiResponse(response) {
-    if (response.hasError()) {
-        this.setState({errorMessage: response.errorMessages()});
-    } else {
-        alert("User Created Successfully");        
-    }
-}
-
-handleSubmit() {
-    app.apiClient().register(this.state.formData, this.handleApiResponse);
-}
-
-  async setBlockStatus(user_id, new_status) {
-    //edit = async() => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDU3NTEwOSwiZXhwIjoxNjEwNjYxNTA5fQ.zDqMV7VJ-A-bUytyvPzg-QtDLwbwQAncPqy1bmtbEas';
-    const body = {"new_status": new_status}
-    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user/" + user_id + "/blocked_status";
-    let response = await put(endpoint, body, token)
+  handleApiResponse(response) {
+      if (response.hasError()) {
+          this.setState({errorMessage: response.errorMessages()});
+      } else {
+          alert("User Created Successfully");        
+      }
   }
 
-  render(){
-    const DisplayUsers = ({user_list}) => (
-      <>
-        {user_list.map(user => (
-          <div className="user" key={user.id}>
-            <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
-            <div>
-              Alias: {user.alias}, 
-              Mail: {user.email}, 
-              ID: {user.national_id_type} {user.national_id}, 
-              Blocked: {user.blocked.toString()}
+  handleSubmit() {
+      app.apiClient().register(this.state.formData, this.handleApiResponse);
+  }
 
-            </div>
-          
-            <Button
+  listAUser(user){
+    let blockText = 'Block';
+    if (user.blocked){
+      blockText = 'Unblock';
+    }
+    else {
+      blockText = 'Block';
+    }
+    return (
+        <div>
+          <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
+          <div>
+            Alias: {user.alias}, 
+            Mail: {user.email}, 
+            ID: {user.national_id_type} {user.national_id}, 
+            Key: {user.id},  
+            Blocked: {user.blocked.toString()}
+          </div>
+  
+          <button 
               type="button"
               variant="contained"
               color="primary"
-              //className={classes.submit}
-              onClick={this.setBlockStatus(user.id, false)}
-            >
-              Block {user.alias}
-            </Button>
-          
-          </div>
-        ))}
-      </>
+              onClick={() => this.setBlockStatus(user.id, !user.blocked)}>
+              {blockText} {user.first_name}
+          </button>
+        </div>
     );
+  }
+
+  async setBlockStatus(user_id, new_status) {
+    //edit = async() => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJ1ZW5vc2FpcmVzQGVsY29uZG9yLm1hcmRlbHBsYXRhIiwicHJvZmlsZSI6MCwiaWQiOjEsImlhdCI6MTYxMDgyNDQzNywiZXhwIjoxNjEwOTEwODM3fQ.o6bidftkx9Fi5dizhpy6S3P8LBz5Pa1MhF-0hIgeCzs';
+    const body = {"new_status": new_status}
+    const endpoint = "https://taller2airbnb-businesscore.herokuapp.com/user/" + user_id + "/blocked_status";
+    let response = await put(endpoint, body, token)
+    this.setState({loading: true})
+    this.reloadUserList()
+  }
+
+  render(){
 
     if (this.state.loading) {
-      return <div>loading...</div>;
+      return <div>Loading...</div>;
     }
 
     if (this.state.user_list.length > 0){
@@ -228,8 +229,9 @@ handleSubmit() {
         <div>
           <div>Status: {this.state.status}</div>
           <div>{this.state.name}</div>
+          <div>{localStorage.getItem("token")}</div>
           <div>
-            <DisplayUsers user_list={this.state.user_list} />
+            {this.state.user_list.map(this.listAUser, this)}
           </div>
         </div>
       );
@@ -239,10 +241,10 @@ handleSubmit() {
       <div>
         <div>Status: {this.state.status}</div>
         <div>{this.state.name}</div>
+        <div>{localStorage.getItem("token")}</div>
       </div>
     );
   }
-  
 }
 
 UserList.propTypes = {
