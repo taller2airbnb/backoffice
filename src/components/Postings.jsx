@@ -48,23 +48,10 @@ class PostingsList extends React.Component {
         loading: true,
         status: null,
         name: '',
-        formData: {
-            email: '',
-            password: '',
-            first_name: '',
-            last_name: '',
-            national_id_type: '',
-            national_id: '',
-            alias: '',
-            profile: 0
-        },
         postings_list: [],
         user_list: [],
         errorMessage: ''
     };
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleApiResponse = this.handleApiResponse.bind(this);
   }
 
   async componentDidMount() {
@@ -98,30 +85,37 @@ class PostingsList extends React.Component {
     }
   }
 
-  handleInputChange(event) {
-    const input = event.target;
-    let formData = this.state.formData;
-    formData[input.name] = input.value;
-    this.setState({formData: formData});
-}
-
-  handleApiResponse(response) {
-      if (response.hasError()) {
-          this.setState({errorMessage: response.errorMessages()});
-      } else {
-          alert("User Created Successfully");        
-      }
-  }
-
-  handleSubmit() {
-      app.apiClient().register(this.state.formData, this.handleApiResponse);
-  }
-
-  listingDisplay(listing){
+  postingDisplay(posting){
+    let publicState = 'Private';
+    if (posting.public){
+      publicState = 'Public'
+    }
+    let deleteState = 'not deleted';
+    if (posting.deleted){
+      deleteState = 'deleted'
+    }
+    let location = 'Exact coordinates not specified.'
+    if (posting.location){
+      location = 'Coordinates: (' + posting.location.x + ',' + posting.location.y + ')'
+    }
     return (
         <div>
-          <div style={{fontWeight: 'bold'}}>{listing.name}</div>
-          <div style={{ marginLeft: '2rem', marginBottom: '0.7rem' }} >Posted by {this.getUserName(listing.id_user)}</div>
+          <div style={{fontWeight: 'bold'}}>{posting.name}</div>
+          <div style={{ marginLeft: '2rem'}}>
+            "{posting.content}"
+          </div>
+          <div style={{ marginLeft: '2rem'}}>
+            Posted by {this.getUserName(posting.id_user)} at {this.formatDateAndTime(posting.creation_date)}
+          </div>
+          <div style={{ marginLeft: '2rem'}}>
+            Lasts from {this.formatDate(posting.start_date)} to {this.formatDate(posting.end_date)}
+          </div>
+          <div style={{ marginLeft: '2rem'}}>
+            Located in {posting.city}, {posting.country}. {location}
+          </div>
+          <div style={{ marginLeft: '2rem', marginBottom: '1rem' }}>
+            {publicState}, {deleteState}. Maximum Guests: {posting.max_number_guests}. Price per day: {posting.price_day}
+          </div>
         </div>
     );
   }
@@ -129,12 +123,31 @@ class PostingsList extends React.Component {
   getUserName(user_id){
     let users = this.state.user_list.filter( function (user) { return user.id == user_id})
     if (users.length > 0) {
-      let user = users.[0]
+      let user = users[0]
       return user.first_name + ' ' + user.last_name
     }
     else{
       return 'unknown'
     }
+  }
+
+  splitDate(date_string){
+    let date = {}
+    date.year = date_string.substring(0,4)
+    date.month = date_string.substring(5,7)
+    date.day = date_string.substring(8,10)
+    date.time = date_string.substring(11,19)
+    return date
+  }
+
+  formatDate(date_string){
+    let date = this.splitDate(date_string)
+    return date.day + '/' + date.month + '/' + date.year
+  }
+
+  formatDateAndTime(date_string){
+    let date = this.splitDate(date_string)
+    return date.day + '/' + date.month + '/' + date.year + ' - ' + date.time
   }
 
   render(){
@@ -147,7 +160,7 @@ class PostingsList extends React.Component {
       return (
         <div>
           <div>
-            {this.state.postings_list.map(this.listingDisplay, this)}
+            {this.state.postings_list.map(this.postingDisplay, this)}
           </div>
         </div>
       );

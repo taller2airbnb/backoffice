@@ -48,22 +48,9 @@ class UserList extends React.Component {
         loading: true,
         status: null,
         name: '',
-        formData: {
-            email: '',
-            password: '',
-            first_name: '',
-            last_name: '',
-            national_id_type: '',
-            national_id: '',
-            alias: '',
-            profile: 0
-        },
         user_list: [],
         errorMessage: ''
     };
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleApiResponse = this.handleApiResponse.bind(this);
   }
 
   async componentDidMount() {
@@ -83,24 +70,6 @@ class UserList extends React.Component {
     }
   }
 
-  handleInputChange(event) {
-    const input = event.target;
-    let formData = this.state.formData;
-    formData[input.name] = input.value;
-    this.setState({formData: formData});
-}
-
-  handleApiResponse(response) {
-      if (response.hasError()) {
-          this.setState({errorMessage: response.errorMessages()});
-      } else {
-          alert("User Created Successfully");        
-      }
-  }
-
-  handleSubmit() {
-      app.apiClient().register(this.state.formData, this.handleApiResponse);
-  }
 
   listAUser(user){
     let blockText = 'Block';
