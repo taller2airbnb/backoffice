@@ -83,10 +83,6 @@ class UserList extends React.Component {
     }
   }
 
-  initializeForm(){
-    this.setState({ test: 'asdas'});
-  }
-
   handleInputChange(event) {
     const input = event.target;
     let formData = this.state.formData;
@@ -117,7 +113,7 @@ class UserList extends React.Component {
     return (
         <div>
           <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
-          <div>
+          <div style={{ marginLeft: '2rem'}}>
             Alias: {user.alias}, 
             Mail: {user.email}, 
             ID: {user.national_id_type} {user.national_id}, 
@@ -125,7 +121,7 @@ class UserList extends React.Component {
             Blocked: {user.blocked.toString()}
           </div>
   
-          <button 
+          <button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
               type="button"
               variant="contained"
               color="primary"
@@ -155,13 +151,9 @@ class UserList extends React.Component {
     if (this.state.user_list.length > 0){
       return (
         <div>
-          <div>Status: {this.state.status}</div>
-          <div>{this.state.name}</div>
-          <div>{localStorage.getItem("token")}</div>
           <div>
             {this.state.user_list.map(this.listAUser, this)}
           </div>
-          <div>{userListEndpoint}</div>
         </div>
       );
     }

@@ -13,8 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
 import {get, put} from "../communication/Request";
-//import {postingsEndpoint, userToken} from "../communication/endpoints/EndpointList";
-import {userListEndpoint, userToken} from "../communication/endpoints/EndpointList"
+import {postingsEndpoint, userListEndpoint, userToken} from "../communication/endpoints/EndpointList";
 
 
 const styles = (theme) => ({
@@ -59,6 +58,7 @@ class PostingsList extends React.Component {
             alias: '',
             profile: 0
         },
+        postings_list: [],
         user_list: [],
         errorMessage: ''
     };
@@ -68,7 +68,21 @@ class PostingsList extends React.Component {
   }
 
   async componentDidMount() {
+    this.reloadPostingsList()
     this.reloadUserList()
+  }
+
+  async reloadPostingsList() {
+    const token = userToken;
+    const endpoint = postingsEndpoint;
+    const response = await get(endpoint, token);
+    this.setState({ status: response.status, loading: false});
+    if (response.status == 200){
+      let json = await response.json();
+      let myList = json.message
+      myList.sort((a,b) => (a.id_posting > b.id_posting) ? 1: -1)
+      this.setState({ postings_list: myList});
+    }
   }
 
   async reloadUserList() {
@@ -82,10 +96,6 @@ class PostingsList extends React.Component {
       myList.sort((a,b) => (a.id > b.id) ? 1: -1)
       this.setState({ user_list: json.message.users});
     }
-  }
-
-  initializeForm(){
-    this.setState({ test: 'asdas'});
   }
 
   handleInputChange(event) {
@@ -107,44 +117,24 @@ class PostingsList extends React.Component {
       app.apiClient().register(this.state.formData, this.handleApiResponse);
   }
 
-  listAUser(user){
-    let blockText = 'Block';
-    if (user.blocked){
-      blockText = 'Unblock';
-    }
-    else {
-      blockText = 'Block';
-    }
+  listingDisplay(listing){
     return (
         <div>
-          <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
-          <div>
-            Alias: {user.alias}, 
-            Mail: {user.email}, 
-            ID: {user.national_id_type} {user.national_id}, 
-            Key: {user.id},  
-            Blcked: {user.blocked.toString()}
-          </div>
-  
-          <button 
-              type="button"
-              variant="contained"
-              color="primary"
-              onClick={() => this.setBlockStatus(user.id, !user.blocked)}>
-              {blockText} {user.first_name}
-          </button>
+          <div style={{fontWeight: 'bold'}}>{listing.name}</div>
+          <div style={{ marginLeft: '2rem', marginBottom: '0.7rem' }} >Posted by {this.getUserName(listing.id_user)}</div>
         </div>
     );
   }
 
-  async setBlockStatus(user_id, new_status) {
-    //edit = async() => {
-    const token = userToken;
-    const body = {"new_status": new_status}
-    const endpoint = userListEndpoint + "/" + user_id + "/blocked_status";
-    let response = await put(endpoint, body, token)
-    this.setState({loading: true})
-    this.reloadUserList()
+  getUserName(user_id){
+    let users = this.state.user_list.filter( function (user) { return user.id == user_id})
+    if (users.length > 0) {
+      let user = users.[0]
+      return user.first_name + ' ' + user.last_name
+    }
+    else{
+      return 'unknown'
+    }
   }
 
   render(){
@@ -153,16 +143,12 @@ class PostingsList extends React.Component {
       return <div>Loading...</div>;
     }
 
-    if (this.state.user_list.length > 0){
+    if (this.state.postings_list.length > 0){
       return (
         <div>
-          <div>Status: {this.state.status}</div>
-          <div>{this.state.name}</div>
-          <div>{localStorage.getItem("token")}</div>
           <div>
-            {this.state.user_list.map(this.listAUser, this)}
+            {this.state.postings_list.map(this.listingDisplay, this)}
           </div>
-          <div>{userListEndpoint}</div>
         </div>
       );
     }
