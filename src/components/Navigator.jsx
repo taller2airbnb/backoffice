@@ -29,6 +29,12 @@ const categories = [
     ],
   },
   {
+    id: 'Postings',
+    children: [
+      { id: 'Postings', icon: <SettingsIcon />, route: 'postings' },    
+    ],
+  },
+  {
     id: 'Quality',
     children: [
       { id: 'Analytics', icon: <SettingsIcon />, route: 'other' },    
