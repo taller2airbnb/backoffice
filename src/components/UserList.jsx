@@ -102,7 +102,6 @@ class UserList extends React.Component {
   }
 
   async setBlockStatus(user_id, new_status) {
-    //edit = async() => {
     const token = userToken;
     const body = {"new_status": new_status}
     const endpoint = userListEndpoint + "/" + user_id + "/blocked_status";

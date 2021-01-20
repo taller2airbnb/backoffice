@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
 import {get, put} from "../communication/Request";
-import {postingsEndpoint, userListEndpoint, userToken} from "../communication/endpoints/EndpointList";
+import {postingsEndpoint, userListEndpoint, postingBlockEndpoint, userToken} from "../communication/endpoints/EndpointList";
 
 
 const styles = (theme) => ({
@@ -86,6 +86,12 @@ class PostingsList extends React.Component {
   }
 
   postingDisplay(posting){
+    let blockText = 'Block';
+    let blockState = 'not blocked'
+    if (posting.blocked){
+      blockText = 'Unblock';
+      blockState = 'blocked'
+    }
     let publicState = 'Private';
     if (posting.public){
       publicState = 'Public'
@@ -113,8 +119,17 @@ class PostingsList extends React.Component {
           <div style={{ marginLeft: '2rem'}}>
             Located in {posting.city}, {posting.country}. {location}
           </div>
-          <div style={{ marginLeft: '2rem', marginBottom: '1rem' }}>
-            {publicState}, {deleteState}. Maximum Guests: {posting.max_number_guests}. Price per day: {posting.price_day}
+          <div style={{ marginLeft: '2rem'}}>
+            {publicState}, {blockState}. Maximum Guests: {posting.max_number_guests}. Price per day: {posting.price_day}
+          </div>
+          <div>
+          <button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={() => this.setBlockState(posting.id_posting, !posting.blocked)}>
+              {blockText} this posting
+          </button>
           </div>
         </div>
     );
@@ -149,6 +164,16 @@ class PostingsList extends React.Component {
     let date = this.splitDate(date_string)
     return date.day + '/' + date.month + '/' + date.year + ' - ' + date.time
   }
+
+  async setBlockState(posting_id, value) {
+    const token = userToken;
+    const body = {"blocked": value}
+    const endpoint = postingBlockEndpoint + posting_id;
+    let response = await put(endpoint, body, token)
+    this.setState({loading: true})
+    this.reloadPostingsList()
+  }
+
 
   render(){
 
