@@ -10,7 +10,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
 import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
 import PermMediaOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import PublicIcon from '@material-ui/icons/Public';
@@ -18,20 +17,21 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { Receipt, People } from '@material-ui/icons';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 
 const categories = [
   {
     id: 'Users',
     children: [
-      { id: 'Create User', icon: <PeopleIcon />, route: 'home' },  
-      { id: 'User List', icon: <PeopleIcon />, route: 'userlist' },  
+      { id: 'Create User', icon: <People />, route: 'home' },  
+      { id: 'User List', icon: <People />, route: 'userlist' },  
     ],
   },
   {
     id: 'Postings',
     children: [
-      { id: 'Postings', icon: <SettingsIcon />, route: 'postings' },    
+      { id: 'Postings', icon: <Receipt />, route: 'postings' },    
     ],
   },
   {

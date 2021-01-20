@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
+import { Cancel, CheckCircle } from '@material-ui/icons';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
 import {get, put} from "../communication/Request";
 import {userListEndpoint, userToken} from "../communication/endpoints/EndpointList"
@@ -73,31 +72,31 @@ class UserList extends React.Component {
 
   listAUser(user){
     let blockText = 'Block';
+    let blockIcon = <Cancel />
+    let blockColor = 'secondary'
     if (user.blocked){
       blockText = 'Unblock';
-    }
-    else {
-      blockText = 'Block';
+      blockIcon = <CheckCircle />
+      blockColor = 'primary'
     }
     return (
-        <div>
-          <div style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</div>
-          <div style={{ marginLeft: '2rem'}}>
-            Alias: {user.alias}, 
-            Mail: {user.email}, 
-            ID: {user.national_id_type} {user.national_id}, 
-            Key: {user.id},  
-            Blocked: {user.blocked.toString()}
-          </div>
-  
-          <button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
+      <TableRow key={user.name}>
+        <TableCell align="left" style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</TableCell>
+        <TableCell align="left">{user.alias}</TableCell>
+        <TableCell align="left">{user.email}</TableCell>
+        <TableCell align="left">{user.national_id_type} {user.national_id}</TableCell>
+        <TableCell align="center">{user.id}</TableCell>
+        <TableCell align="center">{blockIcon}</TableCell>
+        <TableCell align="center">
+          <Button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
               type="button"
               variant="contained"
-              color="primary"
+              color={blockColor}
               onClick={() => this.setBlockStatus(user.id, !user.blocked)}>
-              {blockText} {user.first_name}
-          </button>
-        </div>
+              {blockText}
+          </Button>
+        </TableCell>
+      </TableRow>
     );
   }
 
@@ -118,11 +117,24 @@ class UserList extends React.Component {
 
     if (this.state.user_list.length > 0){
       return (
-        <div>
-          <div>
-            {this.state.user_list.map(this.listAUser, this)}
-          </div>
-        </div>
+        <TableContainer component={Paper}>
+          <Table size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Name</TableCell>
+                <TableCell align="center">Alias</TableCell>
+                <TableCell align="center">Mail</TableCell>
+                <TableCell align="center">Id</TableCell>
+                <TableCell align="center">Key</TableCell>
+                <TableCell align="center">Blocked?</TableCell>
+                <TableCell align="center"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {this.state.user_list.map(this.listAUser, this)}
+            </TableBody>
+          </Table>
+        </TableContainer>
       );
     }
 
