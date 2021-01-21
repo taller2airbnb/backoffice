@@ -24,6 +24,7 @@ class App {
             healthcheck: '/healthcheck',
             other: '/other',
             userlist: '/userlist',
+            postings: '/postings',
         }
     }
 
