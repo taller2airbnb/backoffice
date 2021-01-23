@@ -11,8 +11,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Cancel, CheckCircle } from '@material-ui/icons';
 import {app} from "../app/app";
-import {get, get_profile, put_profile} from "../communication/Request";
-import {postingsEndpoint, backofficeToken, postingBlockEndpoint, userToken, apikeysEndpoint} from "../communication/endpoints/EndpointList";
+import {get_profile, put_profile, post_profile} from "../communication/Request";
+import {backofficeToken, apikeysEndpoint} from "../communication/endpoints/EndpointList";
 
 
 const styles = (theme) => ({
@@ -45,11 +45,25 @@ class ServerList extends React.Component {
 
     this.state = {
         loading: true,
+        create: true,
         status: null,
         name: '',
         api_keys: [],
+        new_key_name: '',
         errorMessage: ''
     };
+    this.onInputchange = this.onInputchange.bind(this);
+    this.onSubmitForm = this.onSubmitForm.bind(this);
+  }
+
+  onSubmitForm() {
+    this.addApiKey(this.state.new_key_name)
+  }
+
+  onInputchange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   }
 
   async componentDidMount() {
@@ -67,6 +81,7 @@ class ServerList extends React.Component {
       myList.sort((a,b) => (a.id > b.id) ? 1: -1)
       this.setState({ api_keys: myList});
     }
+    this.setState({create: true})
   }
 
   apiKeysDisplay(api_key){
@@ -97,26 +112,78 @@ class ServerList extends React.Component {
     );
   }
 
-  getUserName(user_id){
-    let users = this.state.user_list.filter( function (user) { return user.id == user_id})
-    if (users.length > 0) {
-      let user = users[0]
-      return user.first_name + ' ' + user.last_name
-    }
-    else{
-      return 'unknown'
-    }
-  }
-
-  async setActiveState(posting_id, value) {
+  async setActiveState(id, value) {
     const token = backofficeToken;
     const body = {"active": value}
-    const endpoint = apikeysEndpoint + posting_id + '/active_status';
+    const endpoint = apikeysEndpoint + id + '/active_status';
     let response = await put_profile(endpoint, body, token)
     this.setState({loading: true})
     this.reloadApiKeys()
   }
 
+  serverTable(){
+      return (
+        <TableContainer component={Paper}>
+            <Table size="small" aria-label="a dense table">
+            <TableHead>
+                <TableRow>
+                <TableCell align="center">Name</TableCell>
+                <TableCell align="center">Id</TableCell>
+                <TableCell align="center">API key token</TableCell>
+                <TableCell align="center">Active?</TableCell>
+                <TableCell align="center"></TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {this.state.api_keys.map(this.apiKeysDisplay, this)}
+            </TableBody>
+            </Table>
+        </TableContainer>
+      )
+  }
+
+  async addApiKey(name){
+    const token = backofficeToken;
+    const body = {"name_from": name}
+    const endpoint = apikeysEndpoint + 'add/';
+    let response = await post_profile(endpoint, body, token)
+    this.setState({new_key_name: ''})
+    this.setState({loading: true})
+    this.reloadApiKeys()
+  }
+
+  createServerForm(){
+    if (this.state.create){
+        return(
+            <div align='center'  style={{marginTop: '2rem' }}>
+                <Button
+                type="button"
+                variant="contained"
+                color='primary'
+                onClick={() => this.setState({create: false})}>
+                    Add server
+                </Button>
+            </div>
+        )
+    }
+    else{
+        return(
+            <div align='center'  style={{marginTop: '2rem' }}>
+                Name: 
+                <input style={{marginLeft: '2rem' }} name ="new_key_name" type="text" onChange={ this.onInputchange} value={ this.state.new_key_name } />
+                <Button
+                style={{marginLeft: '2rem' }}
+                disabled={this.state.new_key_name==''}
+                type="button"
+                variant="contained"
+                color='primary'
+                onClick={this.onSubmitForm}>
+                    Create
+                </Button>
+            </div>
+        )
+    }
+  }
 
   render(){
 
@@ -127,31 +194,8 @@ class ServerList extends React.Component {
     if (this.state.api_keys.length > 0){
         return (
             <div>
-                <TableContainer component={Paper}>
-                    <Table size="small" aria-label="a dense table">
-                    <TableHead>
-                        <TableRow>
-                        <TableCell align="center">Name</TableCell>
-                        <TableCell align="center">Id</TableCell>
-                        <TableCell align="center">API key token</TableCell>
-                        <TableCell align="center">Active?</TableCell>
-                        <TableCell align="center"></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.api_keys.map(this.apiKeysDisplay, this)}
-                    </TableBody>
-                    </Table>
-                </TableContainer>
-                <div align='center'  style={{marginTop: '2rem' }}>
-                    <Button
-                    type="button"
-                    variant="contained"
-                    color='primary'
-                    onClick={() => this.setState({loading: true})}>
-                        Create server
-                    </Button>
-                </div>
+                {this.serverTable()}
+                {this.createServerForm()}
             </div>      
         );
     }
