@@ -8,7 +8,8 @@ import {Login} from "../controllers/Login";
 import {Users} from "../controllers/Users";
 import HealthCheck from "../controllers/HealthCheck";
 import {PrivateRoute} from "./PrivateRoute";
-import {Postings} from "../controllers/Postings"
+import {Postings} from "../controllers/Postings";
+import {Servers} from "../controllers/Servers";
 
 class Routes extends Component {
     render() {
@@ -24,6 +25,7 @@ class Routes extends Component {
                 <PrivateRoute exact path={app.routes().other} component={Other}/>
                 <PrivateRoute exact path={app.routes().userlist} component={Users}/>
                 <PrivateRoute exact path={app.routes().postings} component={Postings}/>
+                <PrivateRoute exact path={app.routes().servers} component={Servers}/>
             </Router>
         )
     }
