@@ -119,7 +119,7 @@ class PostingsList extends React.Component {
         <TableCell align="center">{publicIcon}</TableCell>
         <TableCell align="center">{blockIcon}</TableCell>
         <TableCell align="center">
-          <Button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
+          <Button
               type="button"
               variant="contained"
               color={blockColor}
