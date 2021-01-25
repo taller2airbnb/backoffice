@@ -10,6 +10,7 @@ import HealthCheck from "../controllers/HealthCheck";
 import {PrivateRoute} from "./PrivateRoute";
 import {Postings} from "../controllers/Postings";
 import {Servers} from "../controllers/Servers";
+import {Covid} from "../controllers/Covid";
 
 class Routes extends Component {
     render() {
@@ -26,6 +27,7 @@ class Routes extends Component {
                 <PrivateRoute exact path={app.routes().userlist} component={Users}/>
                 <PrivateRoute exact path={app.routes().postings} component={Postings}/>
                 <PrivateRoute exact path={app.routes().servers} component={Servers}/>
+                <PrivateRoute exact path={app.routes().covid} component={Covid}/>
             </Router>
         )
     }

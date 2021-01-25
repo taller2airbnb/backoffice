@@ -17,7 +17,7 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { Receipt, People, Computer } from '@material-ui/icons';
+import { Receipt, People, Computer, Report } from '@material-ui/icons';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 
 const categories = [
@@ -38,6 +38,12 @@ const categories = [
     id: 'Servers',
     children: [
       { id: 'Servers', icon: <Computer />, route: 'servers' },    
+    ],
+  },
+  {
+    id: 'Covid Warn',
+    children: [
+      { id: 'Covid Settings', icon: <Report />, route: 'covid' },    
     ],
   },
   {
