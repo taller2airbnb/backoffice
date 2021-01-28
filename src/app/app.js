@@ -26,6 +26,7 @@ class App {
             userlist: '/userlist',
             postings: '/postings',
             servers: '/servers',
+            covid: '/covid',
         }
     }
 
