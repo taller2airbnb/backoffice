@@ -59,7 +59,7 @@ class PostingsList extends React.Component {
   }
 
   async reloadPostingsList() {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const endpoint = postingsEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
@@ -72,7 +72,7 @@ class PostingsList extends React.Component {
   }
 
   async reloadUserList() {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const endpoint = userListEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
@@ -162,7 +162,7 @@ class PostingsList extends React.Component {
   }
 
   async setBlockState(posting_id, value) {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const body = {"blocked": value}
     const endpoint = postingBlockEndpoint + posting_id;
     let response = await put(endpoint, body, token)

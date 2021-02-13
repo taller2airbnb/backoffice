@@ -57,7 +57,7 @@ class UserList extends React.Component {
   }
 
   async reloadUserList() {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const endpoint = userListEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
@@ -101,7 +101,7 @@ class UserList extends React.Component {
   }
 
   async setBlockStatus(user_id, new_status) {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const body = {"new_status": new_status}
     const endpoint = userListEndpoint + "/" + user_id + "/blocked_status";
     let response = await put(endpoint, body, token)
