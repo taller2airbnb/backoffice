@@ -32,6 +32,7 @@ const categories = [
     id: 'Postings',
     children: [
       { id: 'Postings', icon: <Receipt />, route: 'postings' },    
+      { id: 'Create posting', icon: <Receipt />, route: 'newposting' },    
     ],
   },
   {

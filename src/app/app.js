@@ -25,6 +25,7 @@ class App {
             other: '/other',
             userlist: '/userlist',
             postings: '/postings',
+            newposting: '/newposting',
             servers: '/servers',
             covid: '/covid',
         }
