@@ -86,28 +86,64 @@ const useStyles = makeStyles((theme) => ({
           </Typography>
           <form className={classes.form} noValidate>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="fname"
-                  name="first_name"
                   variant="outlined"
                   required
                   fullWidth
-                  id="first_name"
-                  label="First Name"
+                  id="name"
+                  label="Posting Name"
+                  name="name"
+                  autoComplete="name"
                   autoFocus
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  autoComplete="start_date"
+                  name="start_date"
                   variant="outlined"
                   required
                   fullWidth
-                  id="last_name"
-                  label="Last Name"
-                  name="last_name"
-                  autoComplete="lname"
+                  id="start_date"
+                  label="Start Date"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="end_date"
+                  label="End Date"
+                  name="end_date"
+                  autoComplete="end_date"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="price_day"
+                  label="Price per day"
+                  name="price_day"
+                  autoComplete="price_day"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="max_number_guests"
+                  label="Maximum Guests"
+                  name="max_number_guests"
+                  autoComplete="max_number_guests"
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
@@ -116,10 +152,10 @@ const useStyles = makeStyles((theme) => ({
                   variant="outlined"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  id="content"
+                  label="Content"
+                  name="content"
+                  autoComplete="content"
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
@@ -128,10 +164,10 @@ const useStyles = makeStyles((theme) => ({
                   variant="outlined"
                   required
                   fullWidth
-                  id="alias"
-                  label="User Name"
-                  name="alias"
-                  autoComplete="alias"
+                  id="features"
+                  label="Features"
+                  name="features"
+                  autoComplete="features"
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
@@ -140,35 +176,58 @@ const useStyles = makeStyles((theme) => ({
                   variant="outlined"
                   required
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={(e) => changeHandler(e)}
-                />
-              </Grid>            
-              <Grid item xs={12} sm={5}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="national_id_type"
-                  label="Document Type"
-                  type="national_id_type"
-                  id="national_id_type"
+                  id="state"
+                  label="State"
+                  name="state"
+                  autoComplete="state"
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
-              <Grid item xs={12} sm={7}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="country"
+                  name="country"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="country"
+                  label="Country"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   variant="outlined"
                   required
                   fullWidth
-                  name="national_id"
-                  label="Document Number"
-                  type="national_id"
-                  id="national_id"
+                  id="city"
+                  label="City"
+                  name="city"
+                  autoComplete="city"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="latitude"
+                  name="latitude"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="latitude"
+                  label="Latitude"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="longitude"
+                  label="Longitude"
+                  name="longitude"
+                  autoComplete="longitude"
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
@@ -198,14 +257,19 @@ const useStyles = makeStyles((theme) => ({
   
       this.state = {
           formData: {
-              email: '',
-              password: '',
-              first_name: '',
-              last_name: '',
-              national_id_type: '',
-              national_id: '',
-              alias: '',
-              profile: 0
+              name: '',
+              start_date: '',
+              end_date: '',
+              price_day: '',
+              max_number_guests: '',
+              content: '',
+              features: '',
+              state: '',
+              country: '',
+              latitude: '',
+              longitude: '',
+              city: '',
+              public: true,
           },
           errorMessage: ''
       };
@@ -225,7 +289,7 @@ const useStyles = makeStyles((theme) => ({
       if (response.hasError()) {
           this.setState({errorMessage: response.errorMessages()});
       } else {
-          alert("User Created Successfully");        
+          alert("Posting Created Successfully");        
       }
   }
   
@@ -237,7 +301,7 @@ const useStyles = makeStyles((theme) => ({
         return (
             <Container>
                 <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
-                <text>{this.state.formData.email}dasklajk</text>
+                <text>TEST: {this.state.formData.content}</text>
             </Container>
         )
     }    
