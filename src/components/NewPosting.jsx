@@ -10,6 +10,14 @@ import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Cancel, CheckCircle } from '@material-ui/icons';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
 import {get, put} from "../communication/Request";
 import {postingsEndpoint, userListEndpoint, postingBlockEndpoint, userToken} from "../communication/endpoints/EndpointList";
@@ -38,185 +46,205 @@ const styles = (theme) => ({
   },
 });
 
+const useStyles = makeStyles((theme) => ({
+    paper: {
+      marginTop: theme.spacing(8),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    avatar: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+      width: '100%', // Fix IE 11 issue.
+      marginTop: theme.spacing(3),
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2),
+    }  
+  }));
+  
 
-class AddPosting extends React.Component {    
-  constructor(props) {
-    super(props);
-
-    this.state = {
-        loading: true,
-        status: null,
-        name: '',
-        postings_list: [],
-        user_list: [],
-        errorMessage: ''
-    };
-  }
-
-  async componentDidMount() {
-    this.reloadPostingsList()
-    this.reloadUserList()
-  }
-
-  async reloadPostingsList() {
-    const token = userToken;
-    const endpoint = postingsEndpoint;
-    const response = await get(endpoint, token);
-    this.setState({ status: response.status, loading: false});
-    if (response.status == 200){
-      let json = await response.json();
-      let myList = json.message
-      myList.sort((a,b) => (a.id_posting > b.id_posting) ? 1: -1)
-      this.setState({ postings_list: myList});
+  function SignUp(props) {
+    const classes = useStyles();
+    const submitHandler = () => {
+      props.handleSubmit();
     }
-  }
-
-  async reloadUserList() {
-    const token = userToken;
-    const endpoint = userListEndpoint;
-    const response = await get(endpoint, token);
-    this.setState({ status: response.status, loading: false});
-    if (response.status == 200){
-      let json = await response.json();
-      let myList = json.message.users
-      myList.sort((a,b) => (a.id > b.id) ? 1: -1)
-      this.setState({ user_list: json.message.users});
+  
+    const changeHandler = (e) => {
+      props.handleInputChange(e);
     }
-  }
-
-  postingDisplay(posting){
-    let blockText = 'Block';
-    let blockIcon = <Cancel />
-    let blockColor = 'secondary'
-    if (posting.blocked){
-      blockText = 'Unblock';
-      blockIcon = <CheckCircle />
-      blockColor = 'primary'
-    }
-    let publicIcon = <Cancel />
-    if (posting.public){
-      publicIcon = <CheckCircle />
-    }
-    let deleteState = 'not deleted';
-    if (posting.deleted){
-      deleteState = 'deleted'
-    }
-    let location = 'Not specified.'
-    if (posting.location){
-      location = '(' + posting.location.x + ',' + posting.location.y + ')'
-    }
+  
     return (
-      <TableRow key={posting.name}>
-        <TableCell align="left" style={{fontWeight: 'bold'}}>{posting.name}</TableCell>
-        <TableCell align="left">{posting.content}</TableCell>
-        <TableCell align="left">{this.getUserName(posting.id_user)}</TableCell>
-        <TableCell align="left">{this.formatDateAndTime(posting.creation_date)}</TableCell>
-        <TableCell align="left">{this.formatDate(posting.start_date)} ~ {this.formatDate(posting.end_date)}</TableCell>
-        <TableCell align="left">{posting.city}, {posting.country}</TableCell>
-        <TableCell align="left">{location}</TableCell>
-        <TableCell align="center">{posting.max_number_guests}</TableCell>
-        <TableCell align="center">{posting.price_day}</TableCell>
-        <TableCell align="center">{publicIcon}</TableCell>
-        <TableCell align="center">{blockIcon}</TableCell>
-        <TableCell align="center">
-          <Button
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>        
+          <Typography component="h1" variant="h5">
+            Posting Creation Form
+          </Typography>
+          <form className={classes.form} noValidate>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="fname"
+                  name="first_name"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="first_name"
+                  label="First Name"
+                  autoFocus
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="last_name"
+                  label="Last Name"
+                  name="last_name"
+                  autoComplete="lname"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="alias"
+                  label="User Name"
+                  name="alias"
+                  autoComplete="alias"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>            
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="national_id_type"
+                  label="Document Type"
+                  type="national_id_type"
+                  id="national_id_type"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={7}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="national_id"
+                  label="Document Number"
+                  type="national_id"
+                  id="national_id"
+                  onChange={(e) => changeHandler(e)}
+                />
+              </Grid>
+            </Grid>
+            {props.errorMessage && <Typography component="h1" variant="h5" style={{color: 'red'}}>
+              {props.errorMessage}
+            </Typography>}
+            <Button
               type="button"
+              fullWidth
               variant="contained"
-              color={blockColor}
-              onClick={() => this.setBlockState(posting.id_posting, !posting.blocked)}>
-              {blockText}
-          </Button>
-        </TableCell>
-      </TableRow>
+              color="primary"
+              className={classes.submit}
+              onClick={submitHandler}
+            >
+              Create User
+            </Button>
+          </form>
+        </div>      
+      </Container>
     );
   }
-
-  getUserName(user_id){
-    let users = this.state.user_list.filter( function (user) { return user.id == user_id})
-    if (users.length > 0) {
-      let user = users[0]
-      return user.first_name + ' ' + user.last_name
+  
+  class AddPosting extends React.Component {    
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+          formData: {
+              email: '',
+              password: '',
+              first_name: '',
+              last_name: '',
+              national_id_type: '',
+              national_id: '',
+              alias: '',
+              profile: 0
+          },
+          errorMessage: ''
+      };
+      this.handleInputChange = this.handleInputChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleApiResponse = this.handleApiResponse.bind(this);
     }
-    else{
-      return 'unknown'
-    }
+  
+    handleInputChange(event) {
+      const input = event.target;
+      let formData = this.state.formData;
+      formData[input.name] = input.value;
+      this.setState({formData: formData});
   }
-
-  splitDate(date_string){
-    let date = {}
-    date.year = date_string.substring(0,4)
-    date.month = date_string.substring(5,7)
-    date.day = date_string.substring(8,10)
-    date.time = date_string.substring(11,19)
-    return date
+  
+  handleApiResponse(response) {
+      if (response.hasError()) {
+          this.setState({errorMessage: response.errorMessages()});
+      } else {
+          alert("User Created Successfully");        
+      }
   }
-
-  formatDate(date_string){
-    let date = this.splitDate(date_string)
-    return date.day + '/' + date.month + '/' + date.year
+  
+  handleSubmit() {
+      app.apiClient().register(this.state.formData, this.handleApiResponse);
   }
-
-  formatDateAndTime(date_string){
-    let date = this.splitDate(date_string)
-    return date.day + '/' + date.month + '/' + date.year + ' - ' + date.time
+  
+    render(){     
+        return (
+            <Container>
+                <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
+                <text>{this.state.formData.email}dasklajk</text>
+            </Container>
+        )
+    }    
   }
-
-  async setBlockState(posting_id, value) {
-    const token = localStorage.getItem('token');
-    const body = {"blocked": value}
-    const endpoint = postingBlockEndpoint + posting_id;
-    let response = await put(endpoint, body, token)
-    this.setState({loading: true})
-    this.reloadPostingsList()
-  }
-
-
-  render(){
-
-    if (this.state.loading) {
-      return <div>Loading...</div>;
-    }
-
-    if (this.state.postings_list.length > 0){
-      return (
-        <TableContainer component={Paper}>
-        <Table size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">Name</TableCell>
-              <TableCell align="center">Content</TableCell>
-              <TableCell align="center">Owner</TableCell>
-              <TableCell align="center">Creation</TableCell>
-              <TableCell align="center">Duration</TableCell>
-              <TableCell align="center">Location</TableCell>
-              <TableCell align="center">Coordinates</TableCell>
-              <TableCell align="center">Guests</TableCell>
-              <TableCell align="center">PPD</TableCell>
-              <TableCell align="center">Public?</TableCell>
-              <TableCell align="center">Blocked?</TableCell>
-              <TableCell align="center"></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.postings_list.map(this.postingDisplay, this)}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      );
-    }
-
-    return (
-      <div>
-        <div>Status: {this.state.status}</div>
-        <div>{this.state.name}</div>
-        <div>{localStorage.getItem("token")}</div>
-      </div>
-    );
-  }
-}
-
-AddPosting.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(AddPosting)
+  
+  AddPosting.propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+  
+  export default withStyles(styles)(AddPosting);
