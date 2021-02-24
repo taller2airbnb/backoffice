@@ -12,7 +12,7 @@ import { Cancel, CheckCircle } from '@material-ui/icons';
 import Button from '@material-ui/core/Button';
 import {app} from "../app/app";
 import {get, put} from "../communication/Request";
-import {userListEndpoint, userToken} from "../communication/endpoints/EndpointList"
+import {transactionsEndpoint, userToken} from "../communication/endpoints/EndpointList"
 
 
 const styles = (theme) => ({
@@ -46,67 +46,49 @@ class TransactionList extends React.Component {
     this.state = {
         loading: true,
         status: null,
-        name: '',
-        user_list: [],
+        transactions: [],
         errorMessage: ''
     };
   }
 
   async componentDidMount() {
-    this.reloadUserList()
+    this.loadTransactions();
   }
 
-  async reloadUserList() {
+
+  async loadTransactions() {
     const token = userToken;
-    const endpoint = userListEndpoint;
+    const endpoint = transactionsEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
     if (response.status == 200){
       let json = await response.json();
-      let myList = json.message.users
-      myList.sort((a,b) => (a.id > b.id) ? 1: -1)
-      this.setState({ user_list: json.message.users});
+      json.sort((a,b) => (a.creation_date > b.creation_date) ? 1: -1)
+      this.setState({ transactions: json});
     }
   }
 
-
-  listAUser(user){
-    let blockText = 'Block';
-    let blockIcon = <Cancel />
-    let blockColor = 'secondary'
-    if (user.blocked){
-      blockText = 'Unblock';
-      blockIcon = <CheckCircle />
-      blockColor = 'primary'
-    }
+  listATransaction(user){
     return (
       <TableRow key={user.name}>
-        <TableCell align="left" style={{fontWeight: 'bold'}}>{user.first_name} {user.last_name}</TableCell>
-        <TableCell align="left">{user.alias}</TableCell>
-        <TableCell align="left">{user.email}</TableCell>
-        <TableCell align="left">{user.national_id_type} {user.national_id}</TableCell>
-        <TableCell align="center">{user.id}</TableCell>
-        <TableCell align="center">{blockIcon}</TableCell>
-        <TableCell align="center">
-          <Button style={{ marginLeft: '2rem', marginBottom: '1.2rem' }}
-              type="button"
-              variant="contained"
-              color={blockColor}
-              onClick={() => this.setBlockStatus(user.id, !user.blocked)}>
-              {blockText}
-          </Button>
-        </TableCell>
+        <TableCell align="left" style={{fontWeight: 'bold'}}>{user.name_posting}</TableCell>
+        <TableCell align="left">{this.formatDateAndTime(user.creation_date)}</TableCell>
       </TableRow>
     );
   }
 
-  async setBlockStatus(user_id, new_status) {
-    const token = userToken;
-    const body = {"new_status": new_status}
-    const endpoint = userListEndpoint + "/" + user_id + "/blocked_status";
-    let response = await put(endpoint, body, token)
-    this.setState({loading: true})
-    this.reloadUserList()
+  formatDateAndTime(date_string){
+    let date = this.splitDate(date_string)
+    return date.day + '/' + date.month + '/' + date.year + ' - ' + date.time
+  }
+
+  splitDate(date_string){
+    let date = {}
+    date.year = date_string.substring(0,4)
+    date.month = date_string.substring(5,7)
+    date.day = date_string.substring(8,10)
+    date.time = date_string.substring(11,19)
+    return date
   }
 
   render(){
@@ -115,23 +97,18 @@ class TransactionList extends React.Component {
       return <div>Loading...</div>;
     }
 
-    if (this.state.user_list.length > 0){
+    if (this.state.transactions.length > 0){
       return (
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell align="center">Name</TableCell>
-                <TableCell align="center">Alias</TableCell>
-                <TableCell align="center">Mail</TableCell>
-                <TableCell align="center">Id</TableCell>
-                <TableCell align="center">Key</TableCell>
-                <TableCell align="center">Blocked?</TableCell>
-                <TableCell align="center"></TableCell>
+                <TableCell align="center">Posting Name</TableCell>
+                <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.user_list.map(this.listAUser, this)}
+              {this.state.transactions.map(this.listATransaction, this)}
             </TableBody>
           </Table>
         </TableContainer>
@@ -141,8 +118,6 @@ class TransactionList extends React.Component {
     return (
       <div>
         <div>Status: {this.state.status}</div>
-        <div>{this.state.name}</div>
-        <div>{localStorage.getItem("token")}</div>
       </div>
     );
   }
