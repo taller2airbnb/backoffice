@@ -4,6 +4,7 @@ import {app} from "../app/app";
 import {Home} from "../controllers/Home";
 import {Other} from "../controllers/Other"
 import {Profile} from "../controllers/Profile";
+import {Transactions} from "../controllers/Transactions";
 import {Login} from "../controllers/Login";
 import {Users} from "../controllers/Users";
 import HealthCheck from "../controllers/HealthCheck";
@@ -23,6 +24,7 @@ class Routes extends Component {
                 <Route exact path={app.routes().healthcheck} component={HealthCheck}/>
                 <PrivateRoute exact path={app.routes().home} component={Home}/>
                 <PrivateRoute exact path={app.routes().profile} component={Profile}/>
+                <PrivateRoute exact path={app.routes().transactions} component={Transactions}/>
                 <PrivateRoute exact path={app.routes().other} component={Other}/>
                 <PrivateRoute exact path={app.routes().userlist} component={Users}/>
                 <PrivateRoute exact path={app.routes().postings} component={Postings}/>
