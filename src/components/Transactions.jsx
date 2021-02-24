@@ -57,7 +57,7 @@ class TransactionList extends React.Component {
 
 
   async loadTransactions() {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const endpoint = transactionsEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
@@ -68,11 +68,15 @@ class TransactionList extends React.Component {
     }
   }
 
-  listATransaction(user){
+  listATransaction(transaction){
     return (
-      <TableRow key={user.name}>
-        <TableCell align="left" style={{fontWeight: 'bold'}}>{user.name_posting}</TableCell>
-        <TableCell align="left">{this.formatDateAndTime(user.creation_date)}</TableCell>
+      <TableRow key={transaction.name}>
+        <TableCell align="left" style={{fontWeight: 'bold'}}>{transaction.name_posting}</TableCell>
+        <TableCell align="center">{transaction.first_name_booker} {transaction.last_name_booker}</TableCell>
+        <TableCell align="center">{transaction.first_name_owner} {transaction.last_name_owner}</TableCell>
+        <TableCell align="left">{transaction.operation}</TableCell>
+        <TableCell align="center">{transaction.payment}</TableCell>
+        <TableCell align="center">{this.formatDateAndTime(transaction.creation_date)}</TableCell>
       </TableRow>
     );
   }
@@ -104,6 +108,10 @@ class TransactionList extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell align="center">Posting Name</TableCell>
+                <TableCell align="center">Booker</TableCell>
+                <TableCell align="center">Owner</TableCell>
+                <TableCell align="center">Operation</TableCell>
+                <TableCell align="center">Amount</TableCell>
                 <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>

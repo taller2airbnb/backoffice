@@ -17,7 +17,7 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { Receipt, People, Computer, Report } from '@material-ui/icons';
+import { Receipt, People, Computer, Report, Money } from '@material-ui/icons';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 
 const categories = [
@@ -26,7 +26,7 @@ const categories = [
     children: [
       { id: 'Create User', icon: <People />, route: 'home' },  
       { id: 'User List', icon: <People />, route: 'userlist' },  
-      { id: 'Transactions', icon: <People />, route: 'transactions' },  
+      { id: 'Transactions', icon: <Money />, route: 'transactions' },  
     ],
   },
   {
