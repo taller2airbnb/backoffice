@@ -26,6 +26,7 @@ const categories = [
     children: [
       { id: 'Create User', icon: <People />, route: 'home' },  
       { id: 'User List', icon: <People />, route: 'userlist' },  
+      { id: 'Transactions', icon: <People />, route: 'transactions' },  
     ],
   },
   {

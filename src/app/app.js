@@ -21,6 +21,7 @@ class App {
             login: '/',
             home: '/home',
             profile: '/profile',
+            transactions: '/transactions',
             healthcheck: '/healthcheck',
             other: '/other',
             userlist: '/userlist',
