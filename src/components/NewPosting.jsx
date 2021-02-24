@@ -19,8 +19,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
-import {get, put} from "../communication/Request";
-import {postingsEndpoint, userListEndpoint, postingBlockEndpoint, userToken} from "../communication/endpoints/EndpointList";
+import {get, post} from "../communication/Request";
+import {newPostingEndpoint, userToken} from "../communication/endpoints/EndpointList";
 
 
 const styles = (theme) => ({
@@ -68,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
   
 
   function SignUp(props) {
+    let today = new Date();
     const classes = useStyles();
     const submitHandler = () => {
       props.handleSubmit();
@@ -101,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="date"
                   autoComplete="start_date"
                   name="start_date"
                   variant="outlined"
@@ -108,11 +110,15 @@ const useStyles = makeStyles((theme) => ({
                   fullWidth
                   id="start_date"
                   label="Start Date"
+                  locale={"en"}
+                  formatChosenDate={date => {return date.format('YYYY-MM-DD');}}
+                  timeZoneOffsetInMinutes={undefined}
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="date"
                   variant="outlined"
                   required
                   fullWidth
@@ -120,11 +126,15 @@ const useStyles = makeStyles((theme) => ({
                   label="End Date"
                   name="end_date"
                   autoComplete="end_date"
+                  locale={"en"}
+                  formatChosenDate={date => {return date.format('YYYY-MM-DD');}}
+                  timeZoneOffsetInMinutes={undefined}
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   variant="outlined"
                   required
                   fullWidth
@@ -137,6 +147,7 @@ const useStyles = makeStyles((theme) => ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   variant="outlined"
                   required
                   fullWidth
@@ -171,18 +182,6 @@ const useStyles = makeStyles((theme) => ({
                   onChange={(e) => changeHandler(e)}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="state"
-                  label="State"
-                  name="state"
-                  autoComplete="state"
-                  onChange={(e) => changeHandler(e)}
-                />
-              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="country"
@@ -209,7 +208,9 @@ const useStyles = makeStyles((theme) => ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   autoComplete="latitude"
+                  defaultValue = "-58.5429559"
                   name="latitude"
                   variant="outlined"
                   required
@@ -221,7 +222,9 @@ const useStyles = makeStyles((theme) => ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   variant="outlined"
+                  defaultValue = "-34.5140423"
                   required
                   fullWidth
                   id="longitude"
@@ -258,26 +261,39 @@ const useStyles = makeStyles((theme) => ({
       this.state = {
           formData: {
               name: '',
-              start_date: '',
-              end_date: '',
-              price_day: '',
-              max_number_guests: '',
+              start_date: this.todaysDate(),
+              end_date: this.todaysDate(),
+              price_day: 0,
+              max_number_guests: 0,
               content: '',
               features: '',
-              state: '',
+              state: 'activa',
               country: '',
-              latitude: '',
-              longitude: '',
               city: '',
+              latitude: "-58.5429559",
+              longitude: "-34.5140423",
               public: true,
           },
           errorMessage: ''
       };
       this.handleInputChange = this.handleInputChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
-      this.handleApiResponse = this.handleApiResponse.bind(this);
+      //this.handleApiResponse = this.handleApiResponse.bind(this);
     }
   
+    todaysDate(){
+        let today = new Date();
+        var day = today.getDate();
+        if (day<10){
+            day = '0'+day
+        }
+        var month = today.getMonth() + 1;
+        if (month<10){
+            month = '0'+month
+        }
+        return today.getFullYear()+'-'+month+'-'+day;
+    }
+
     handleInputChange(event) {
       const input = event.target;
       let formData = this.state.formData;
@@ -285,23 +301,62 @@ const useStyles = makeStyles((theme) => ({
       this.setState({formData: formData});
   }
   
-  handleApiResponse(response) {
-      if (response.hasError()) {
-          this.setState({errorMessage: response.errorMessages()});
-      } else {
-          alert("Posting Created Successfully");        
-      }
+  validForm(){
+    var fields = ['latitude', 'longitude', 'price_day'];
+    for (var i in fields){
+        if((this.state.formData[fields[i]].toString() == '') || (isNaN(Number(this.state.formData[fields[i]])))){
+            this.setState({errorMessage: 'Field ' + fields[i] + ' not numeric or empty.'})
+            return false;
+        }
+    }
+    if((this.state.formData.max_number_guests.toString() == '') || (isNaN(Number(Math.floor(this.state.formData.max_number_guests))))){
+        this.setState({errorMessage: 'Field Max guests not integer or empty.'})
+        return false;
+    }
+    return true;
   }
-  
+
+  async submit(form) {
+    //const token = localStorage.getItem('token');
+    const token = userToken;
+    const body = form
+    const endpoint = newPostingEndpoint;
+    let response = await post(endpoint, body, token)
+    if(response.status == 200){
+        this.setState({errorMessage: 'Posting created successfully.'})
+    }else{
+        let json = await response.json();
+        this.setState({errorMessage: json.message})
+    }
+  }
+
+  cleanUpForm(){
+      let form = this.state.formData;
+      form.price_day = form.price_day.toString()
+      form.max_number_guests = Number(form.max_number_guests)
+      form.latitude = Number(form.latitude)
+      form.longitude = Number(form.longitude)
+  }
+
+
   handleSubmit() {
-      app.apiClient().register(this.state.formData, this.handleApiResponse);
+      if (this.validForm()){
+        var newForm = this.cleanUpForm()
+        this.submit(newForm)
+      }
+      //app.apiClient().register(this.state.formData, this.handleApiResponse);
   }
   
     render(){     
         return (
             <Container>
                 <SignUp handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} errorMessage={this.state.errorMessage}></SignUp>
-                <text>TEST: {this.state.formData.content}</text>
+                <div>
+                    <text>Price: {Number(this.state.formData.price_day.toString())}</text>
+                </div>
+                <div>
+                    <text>Latitude: {this.state.formData.latitude.toString()}</text>
+                </div>
             </Container>
         )
     }    
