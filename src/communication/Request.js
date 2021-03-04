@@ -23,13 +23,20 @@ return response;
 }
 
 export async function put(endpoint, body = '', bearerToken){
-let headers = { 'Content-Type': 'application/json' }
-const requestOptions = getRequestOptions('PUT', headers, body, bearerToken);    
+  let headers = { 'Content-Type': 'application/json' }
+  const requestOptions = getRequestOptions('PUT', headers, body, bearerToken);    
+  
+  let response = await fetch(endpoint, requestOptions);
+  return response;
+  }
 
-let response = await fetch(endpoint, requestOptions);
-return response;
-}
-
+export async function post(endpoint, body = '', bearerToken){
+  let headers = { 'Content-Type': 'application/json' }
+  const requestOptions = getRequestOptions('POST', headers, body, bearerToken);    
+  
+  let response = await fetch(endpoint, requestOptions);
+  return response;
+  }
   
 export async function get_profile(endpoint, bearerToken){
   let headers = { 'Content-Type': 'application/json', 'Token': bearerToken }
