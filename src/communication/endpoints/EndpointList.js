@@ -1,4 +1,5 @@
 export const userListEndpoint = "https://taller2airbnb-businesscore.herokuapp.com/user"
+export const registerEndpoint = "https://taller2airbnb-businesscore.herokuapp.com/register"
 export const postingsEndpoint = "https://taller2airbnb-businesscore.herokuapp.com/posting/admin"
 export const postingBlockEndpoint = "https://taller2airbnb-businesscore.herokuapp.com/posting/blocked_status/"
 export const covidEndpoint = "http://taller2airbnb-covidwarn.herokuapp.com/params/"

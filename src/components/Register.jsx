@@ -8,10 +8,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from "../app/app";
+import {registerEndpoint, userToken} from "../communication/endpoints/EndpointList";
+import {post} from "../communication/Request";
 
 const styles = (theme) => ({
   paper: {
@@ -161,6 +164,22 @@ function SignUp(props) {
                 onChange={(e) => changeHandler(e)}
               />
             </Grid>
+            <Grid item xs={12}>
+              <TextField 
+                variant="outlined"
+                required
+                fullWidth
+                id="profile"
+                name="profile"
+                label="User Type"
+                type="profile"
+                autoComplete="2"
+                onChange={(e) => changeHandler(e)}
+                select>
+                <MenuItem value="1">Host</MenuItem>
+                <MenuItem value="2">Guest</MenuItem>
+              </TextField>
+            </Grid>        
           </Grid>
           {props.errorMessage && <Typography component="h1" variant="h5" style={{color: 'red'}}>
             {props.errorMessage}
@@ -193,8 +212,10 @@ class Register extends React.Component {
             last_name: '',
             national_id_type: '',
             national_id: '',
+            google_token: '',
+            user_type: 'bookbnb',
             alias: '',
-            profile: 0
+            profile: 2
         },
         errorMessage: ''
     };
@@ -211,8 +232,10 @@ class Register extends React.Component {
       last_name: '',
       national_id_type: '',
       national_id: '',
+      google_token: '',
+      user_type: 'bookbnb',
       alias: '',
-      profile: 0
+      profile: 2
   } })
   }
 
@@ -231,8 +254,23 @@ handleApiResponse(response) {
     }
 }
 
+async register(){
+  const token = localStorage.getItem('token');
+  let body = this.state.formData;
+  body['profile'] = Number(body['profile'])
+  const endpoint = registerEndpoint;
+  let response = await post(endpoint, body, token);
+  if(response.status == 200){
+    this.initializeForm()
+    this.setState({errorMessage: 'User created successfully.'})
+  }else{
+    let json = await response.json();
+    this.setState({errorMessage: json.message ?? 'Oops! Something went wrong.'})
+  }
+}
+
 handleSubmit() {
-    app.apiClient().register(this.state.formData, this.handleApiResponse);
+    this.register();
 }
 
   render(){     
