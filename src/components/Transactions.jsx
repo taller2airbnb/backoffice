@@ -63,8 +63,9 @@ class TransactionList extends React.Component {
     this.setState({ status: response.status, loading: false});
     if (response.status == 200){
       let json = await response.json();
-      json.sort((a,b) => (a.creation_date > b.creation_date) ? 1: -1)
-      this.setState({ transactions: json});
+      let transactionList = json.message;
+      transactionList.sort((a,b) => (a.creation_date > b.creation_date) ? 1: -1)
+      this.setState({transactions: transactionList});
     }
   }
 
