@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/backoffice/static/css/main.7ed35391.chunk.css",
+    "main.js": "/backoffice/static/js/main.4caa3edc.chunk.js",
+    "main.js.map": "/backoffice/static/js/main.4caa3edc.chunk.js.map",
+    "runtime-main.js": "/backoffice/static/js/runtime-main.ad4ec29f.js",
+    "runtime-main.js.map": "/backoffice/static/js/runtime-main.ad4ec29f.js.map",
+    "static/js/2.ea176255.chunk.js": "/backoffice/static/js/2.ea176255.chunk.js",
+    "static/js/2.ea176255.chunk.js.map": "/backoffice/static/js/2.ea176255.chunk.js.map",
+    "index.html": "/backoffice/index.html",
+    "precache-manifest.c9064eeecd4dbb9e5667ef38a08d2ddf.js": "/backoffice/precache-manifest.c9064eeecd4dbb9e5667ef38a08d2ddf.js",
+    "service-worker.js": "/backoffice/service-worker.js",
+    "static/css/main.7ed35391.chunk.css.map": "/backoffice/static/css/main.7ed35391.chunk.css.map",
+    "static/js/2.ea176255.chunk.js.LICENSE.txt": "/backoffice/static/js/2.ea176255.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/backoffice/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ad4ec29f.js",
+    "static/js/2.ea176255.chunk.js",
+    "static/css/main.7ed35391.chunk.css",
+    "static/js/main.4caa3edc.chunk.js"
+  ]
+}
