@@ -57,7 +57,7 @@ class TransactionList extends React.Component {
 
 
   async loadTransactions() {
-    const token = userToken;
+    const token = localStorage.getItem('token');
     const endpoint = transactionsEndpoint;
     const response = await get(endpoint, token);
     this.setState({ status: response.status, loading: false});
