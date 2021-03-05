@@ -93,14 +93,6 @@ class PostingsList extends React.Component {
       blockIcon = <CheckCircle />
       blockColor = 'primary'
     }
-    let publicIcon = <Cancel />
-    if (posting.public){
-      publicIcon = <CheckCircle />
-    }
-    let deleteState = 'not deleted';
-    if (posting.deleted){
-      deleteState = 'deleted'
-    }
     let location = 'Not specified.'
     if (posting.location){
       location = '(' + posting.location.x + ',' + posting.location.y + ')'
@@ -116,7 +108,6 @@ class PostingsList extends React.Component {
         <TableCell align="left">{location}</TableCell>
         <TableCell align="center">{posting.max_number_guests}</TableCell>
         <TableCell align="center">{posting.price_day}</TableCell>
-        <TableCell align="center">{publicIcon}</TableCell>
         <TableCell align="center">{blockIcon}</TableCell>
         <TableCell align="center">
           <Button
@@ -192,7 +183,6 @@ class PostingsList extends React.Component {
               <TableCell align="center">Coordinates</TableCell>
               <TableCell align="center">Guests</TableCell>
               <TableCell align="center">PPD</TableCell>
-              <TableCell align="center">Public?</TableCell>
               <TableCell align="center">Blocked?</TableCell>
               <TableCell align="center"></TableCell>
             </TableRow>
